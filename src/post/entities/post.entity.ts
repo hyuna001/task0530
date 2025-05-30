@@ -9,5 +9,4 @@ export class Post {
     updatedAt: Date = new Date();
     isDeleted: boolean = false;
 
- 
 }
