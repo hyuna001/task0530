@@ -10,60 +10,64 @@ import { format } from 'date-fns/format';
 export class PostService {
 
     private posts: Post[] = [];
+    private postId: number = 0;
    
     // all
-    getAllPosts(){
-        return this.posts.filter(p => !p.isDeleted).filter(p => !p.isDeleted)
+    getAllPosts() {
+        return this.posts
+            .filter(p => !p.isDeleted)
+            .map(post => ({
+                id: post.id,
+                title: post.title,
+                content: post.content,
+                authorName: post.authorName,
+                createdAt: post.createdAt,
+                updatedAt: post.updatedAt
+            }));
     }
 
 
     // one 
     getOnePost(postId:number) {
-  
-        const post = this.posts.map( post => {
-            return {
-                title: post.title,
-                authorId: post.authorId,
-                authorName: post.authorName,
-                createdAt: post.createdAt,
-                updatedAt: post.updatedAt,
-            }
-        })
-        return this.posts.find(post => post.id == postId && post.isDeleted == false);
-    }
-    
+        const post = this.posts.find(post => post.id == postId && post.isDeleted == false);
 
-    //insert
-    createPost(postData : CreatePostDto){
-   
-        const id = this.posts.length + 1;
-
-        this.posts.push({
-            id,
-            ...postData,
-
-        });
-
-        return this.posts;
-    }
-
-
-    
-
-    // update
-    updatePost(id: number, updateData: UpdatePostDto): Post {
-
-        const post = this.getOnePost(id);
-
-        if(post){
-            post.title = updateData.title || post.title;
-            post.content = updateData.content || post.content;
-            post.updatedAt = updateData.updatedAt || new Date();
-        } else {
-            throw new NotFoundException("update failed! ");
+        if (!post) {
+            throw new NotFoundException('Post not found');
         }
 
         return post;
+    }
+    
+    
+    //insert
+    createPost(postData : CreatePostDto){
+   
+        // const id = this.posts.length + 1;
+        this.postId++;
+        
+        this.posts.push({
+            id : this.postId,
+            ...postData,
+        });
+
+        return 'create success';
+    }
+
+
+    // update
+    updatePost(id: number, updateData: UpdatePostDto) {
+
+        const post = this.getOnePost(id);
+
+        if(!post){
+            throw new NotFoundException("update failed! ");
+        }else {
+            post.title = updateData.title ?? post.title;
+            post.content = updateData.content || post.content;
+            post.updatedAt = updateData.updatedAt || new Date();
+
+            return post;
+        }
     }
 
     // delete
@@ -75,8 +79,6 @@ export class PostService {
         } else {
             throw new NotFoundException("delete failed! ");
         }
-
-        return this.posts;
     }
 
 }

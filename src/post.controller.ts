@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Redirect } from '@nestjs/common';
 
 import { CreatePostDto } from './post/dto/create_post.dto';
 import { UpdatePostDto } from './post/dto/update_post_dto';
@@ -7,7 +7,7 @@ import { PostService } from './post.service';
 @Controller('posts')
 export class PostController {
 
-    constructor(private postService : PostService){};
+    constructor(private readonly postService : PostService){};
 
     @Get()
     getAll() {
@@ -25,15 +25,24 @@ export class PostController {
     }
 
     //삭제
-    @Put('/del/:id')
-    deletePost(@Param('id') postId:number) {
-        return this.postService.deletePost(postId);
+    @Delete('/:id')
+    deletePost(@Param('id', ParseIntPipe) postId:number) {
+        this.postService.deletePost(postId);
+        return {
+            message: 'delete success',
+            postId: postId,
+        }
     }
 
     //수정
     @Patch(':id')
     updatePost(@Param('id') postId:number, @Body() updateData: UpdatePostDto) {
-        return this.postService.updatePost(postId, updateData);
+   
+        this.postService.updatePost(postId, updateData);
+        return {
+            message: 'update success',
+            postId: postId,
+        }
     }
 
 }
