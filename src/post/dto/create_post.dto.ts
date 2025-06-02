@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { IsBoolean, IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
 import { format } from 'date-fns';
 
@@ -26,11 +27,4 @@ export class CreatePostDto {
     @IsOptional()
     isDeleted: boolean = false;
 
-    getFormattedCreatedAt(): string {
-        return format(this.createdAt, 'yyyy-MM-dd HH:mm:ss');
-    }
-
-    getFormattedUpdatedAt(): string {
-        return format(this.updatedAt, 'yyyy-MM-dd HH:mm:ss');
-    }
 }
