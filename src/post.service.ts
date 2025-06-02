@@ -13,24 +13,13 @@ export class PostService {
    
     // all
     getAllPosts(){
-        // 글 제목, 작성자 아이디, 작성자 이름, 작성일, 수정일
-        const post = this.posts.map( post => {
-            return {
-                title: post.title,
-                authorId: post.authorId,
-                authorName: post.authorName,
-                createdAt: post.createdAt,
-                updatedAt: post.updatedAt,
-            }
-        })
-
-        return post;
+        return this.posts.filter(p => !p.isDeleted).filter(p => !p.isDeleted)
     }
 
 
     // one 
     getOnePost(postId:number) {
-        // 글 제목, 글 내용, 작성자 아이디, 작성자 이름, 작성일, 수정일
+  
         const post = this.posts.map( post => {
             return {
                 title: post.title,
@@ -46,7 +35,7 @@ export class PostService {
 
     //insert
     createPost(postData : CreatePostDto){
-        //글 제목, 글 내용, 작성자 아이디, 작성자 이름 
+   
         const id = this.posts.length + 1;
 
         this.posts.push({
