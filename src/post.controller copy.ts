@@ -7,34 +7,7 @@ import { PostService } from './post.service';
 @Controller('posts')
 export class PostController {
 
-    constructor(private readonly postService : PostService){};
-
-    @Post()
-    createPost(@Body() postData: CreatePostDto){
-        return this.postService.createPost(postData);
-    }
-    
-
-    @Get()
-    getAll(){
-        return this.postService.getAll();
-    }
-    
-    @Get(':id')
-    getOne(@Param ('id', ParseIntPipe) id :number) {
-        return this.postService.getPostDetail(id);
-    }
-
-    @Patch(':id')
-    updatePost(@Param('id', ParseIntPipe) id :number, @Body() updateData : UpdatePostDto){
-        return this.postService.updatePost(id, updateData);
-    }
-
-    @Delete(':id')
-    deletePost(@Param('id', ParseIntPipe) id :number){
-        return this.postService.deletePost(id);
-    }
-
+    // constructor(private readonly postService : PostService){};
 
     // @Get()
     // getAll() {
@@ -46,7 +19,10 @@ export class PostController {
     //     return this.postService.getOnePost(postId);
     // }
 
-
+    // @Post()
+    // insertPost(@Body() postData: CreatePostDto){
+    //     return this.postService.createPost(postData);
+    // }
 
     // //삭제
     // @Delete('/:id')

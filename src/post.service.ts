@@ -3,82 +3,82 @@ import { Post } from './post/entities/post.entity';
 import { CreatePostDto } from './post/dto/create_post.dto';
 import { UpdatePostDto } from './post/dto/update_post_dto';
 import { plainToInstance } from 'class-transformer';
-import { format } from 'date-fns/format';
+import { PrismaService } from './prisma/prisma.service';
+
+
 
 
 @Injectable()
-export class PostService {
+export class PostService { 
+    constructor(private readonly prismaService: PrismaService) {}
 
-    private posts: Post[] = [];
-    private postId: number = 0;
-   
-    // all
-    getAllPosts() {
-        return this.posts
-            .filter(p => !p.isDeleted)
-            .map(post => ({
-                id: post.id,
-                title: post.title,
-                content: post.content,
-                authorName: post.authorName,
-                createdAt: post.createdAt,
-                updatedAt: post.updatedAt
-            }));
-    }
-
-
-    // one 
-    getOnePost(postId:number) {
-        const post = this.posts.find(post => post.id == postId && post.isDeleted == false);
-
-        if (!post) {
-            throw new NotFoundException('Post not found');
-        }
+    async createPost(postData: CreatePostDto) {
+        const post = await this.prismaService.post.create({
+            data: {
+                ...postData
+            }
+        });
+        
+        console.log(post);
 
         return post;
     }
-    
-    
-    //insert
-    createPost(postData : CreatePostDto){
-   
-        // const id = this.posts.length + 1;
-        this.postId++;
-        
-        this.posts.push({
-            id : this.postId,
-            ...postData,
+
+
+    async getAll(){
+        const list = await this.prismaService.post.findMany({
+             where : {
+                isDeleted : false
+             }
         });
 
-        return 'create success';
+        console.log(list);
+        return list;
+    }   
+
+    async getPostDetail (id : number) {
+        const detail = await this.prismaService.post.findUnique({
+            where: {
+                id: id
+            }
+        });
+
+        console.log(id);
+        console.log(detail);
+
+        return detail;
     }
 
+    async updatePost(id :number , updateData : UpdatePostDto){
+        const post = await this.prismaService.post.update({
+            where: {
+                id: id
+            },
+            data: updateData
+        });
 
-    // update
-    updatePost(id: number, updateData: UpdatePostDto) {
+        console.log(post);
 
-        const post = this.getOnePost(id);
-
-        if(!post){
-            throw new NotFoundException("update failed! ");
-        }else {
-            post.title = updateData.title ?? post.title;
-            post.content = updateData.content || post.content;
-            post.updatedAt = updateData.updatedAt || new Date();
-
-            return post;
-        }
+        return post;
     }
 
-    // delete
-    deletePost(postId:number) {
-        const post = this.getOnePost(postId);
+    async deletePost(id :number){
+        const post = await this.prismaService.post.update({
+            where: {
+                id: id
+            },
+            data: {
+                isDeleted: true
+            }
+        });
 
-        if(post){
-            post.isDeleted = true;
-        } else {
-            throw new NotFoundException("delete failed! ");
-        }
-    }
+         
+        console.log(post);
+
+        return post;
+    }   
 
 }
+
+   
+    
