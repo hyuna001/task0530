@@ -49,7 +49,7 @@ export class PostService {
         
         const total = await this.prismaService.post.count();
 
-        const lastPg = Math.ceil(total/ limit); 
+        const lastPg = Math.ceil(total / limit); 
 
         return {
             list,
@@ -60,24 +60,6 @@ export class PostService {
     }   
 
 
-    async getAll2(page : number, limit : number){
-        const list = await this.prismaService.post.findMany({
-                skip : ( page - 1 ) * limit,
-                take : limit ,
-                orderBy : {createdAt : 'desc'}
-            }
-        );
-        
-        const cnt = await this.prismaService.post.count();
-        const lastPg = Math.ceil(cnt / limit); 
-
-        return {
-            list,
-            cnt,
-            page,
-            lastPg
-        }
-    }   
 
     async getPostDetail (id : number) {
         const detail = await this.prismaService.post.findUnique({
