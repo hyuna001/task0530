@@ -3,6 +3,7 @@ import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Q
 import { CreatePostDto } from './post/dto/create_post.dto';
 import { UpdatePostDto } from './post/dto/update_post_dto';
 import { PostService } from './post.service';
+import { PaginationDto } from './post/dto/pagination.dto';
 
 @Controller('posts')
 export class PostController {
@@ -15,12 +16,8 @@ export class PostController {
     }
 
     @Get()
-    getAll(@Query ('page') page : string, @Query ('limit') limit : string) {
-
-        const pageNum = parseInt(page) || 1;
-        const limitNum = parseInt(limit) || 10;
-
-        return this.postService.getAll(pageNum, limitNum);
+    getAll(@Query () paginationDto : PaginationDto ){
+       return this.postService.getAll(paginationDto);
     }
     
     @Get(':id')
