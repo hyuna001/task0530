@@ -10,6 +10,7 @@ import { PrismaService } from './prisma/prisma.service';
 
 @Injectable()
 export class PostService { 
+
     constructor(private readonly prismaService: PrismaService) {}
 
     async createPost(postData: CreatePostDto) {
@@ -18,28 +19,35 @@ export class PostService {
                 ...postData
             }
         });
-        
-        console.log(post);
 
         return post;
     }
 
 
-    async getAll(){
+    async getAll(page : number, limit : number){
         const list = await this.prismaService.post.findMany({
-             where : {
-                isDeleted : false
-             }
-        });
+                skip : ( page - 1 ) * limit,
+                take : limit ,
+                orderBy : {createdAt : 'desc'}
+            }
+        );
+        
+        const cnt = await this.prismaService.post.count();
+        const lastPg = Math.ceil(cnt / limit); 
 
-        console.log(list);
-        return list;
+        return {
+            list,
+            cnt,
+            page,
+            lastPg
+        }
     }   
 
     async getPostDetail (id : number) {
         const detail = await this.prismaService.post.findUnique({
             where: {
-                id: id
+                id: id,
+                isDeleted: false
             }
         });
 
@@ -57,9 +65,7 @@ export class PostService {
             data: updateData
         });
 
-        console.log(post);
-
-        return post;
+        return 'update success';
     }
 
     async deletePost(id :number){
@@ -71,9 +77,6 @@ export class PostService {
                 isDeleted: true
             }
         });
-
-         
-        console.log(post);
 
         return post;
     }   

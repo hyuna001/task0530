@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Redirect } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, Redirect } from '@nestjs/common';
 
 import { CreatePostDto } from './post/dto/create_post.dto';
 import { UpdatePostDto } from './post/dto/update_post_dto';
@@ -13,11 +13,14 @@ export class PostController {
     createPost(@Body() postData: CreatePostDto){
         return this.postService.createPost(postData);
     }
-    
 
     @Get()
-    getAll(){
-        return this.postService.getAll();
+    getAll(@Query ('page') page : string, @Query ('limit') limit : string) {
+
+        const pageNum = parseInt(page) || 1;
+        const limitNum = parseInt(limit) || 10;
+
+        return this.postService.getAll(pageNum, limitNum);
     }
     
     @Get(':id')
@@ -35,38 +38,5 @@ export class PostController {
         return this.postService.deletePost(id);
     }
 
-
-    // @Get()
-    // getAll() {
-    //     return this.postService.getAllPosts();
-    // }
-
-    // @Get(':id')
-    // getOne(@Param('id') postId:number) {
-    //     return this.postService.getOnePost(postId);
-    // }
-
-
-
-    // //삭제
-    // @Delete('/:id')
-    // deletePost(@Param('id', ParseIntPipe) postId:number) {
-    //     this.postService.deletePost(postId);
-    //     return {
-    //         message: 'delete success',
-    //         postId: postId,
-    //     }
-    // }
-
-    // //수정
-    // @Patch(':id')
-    // updatePost(@Param('id') postId:number, @Body() updateData: UpdatePostDto) {
-   
-    //     this.postService.updatePost(postId, updateData);
-    //     return {
-    //         message: 'update success',
-    //         postId: postId,
-    //     }
-    // }
 
 }
